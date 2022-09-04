@@ -5,15 +5,23 @@ import Timer from "./components/Timer";
 import Trivia from "./components/Trivia";
 import useSound from "use-sound";
 import Aot from "./sounds/aot.mp3";
-import Win from "./sounds/win.mp3"
+import Win from "./sounds/win.mp3";
 function App() {
   const [username, setUsername] = useState(null);
   const [timeOut, setTimeOut] = useState(false);
   const [questionNumber, setQuestionNumber] = useState(1);
   const [earned, setEarned] = useState("Normal Human Bakaaa!");
-  const [aot] = useSound(Aot,{volume:0.3});
-  const [win] = useSound(Win,{volume:0.1});
-
+  const [aot,{stop:stopAot}] = useSound(Aot,{ volume: 0.3 });
+  const [win,{stop:stopWin}] = useSound(Win, { volume: 0.2 });
+  const playAgain = (song) => {
+    setUsername(null);
+    setTimeOut(false);
+    setQuestionNumber(1);
+    if(song ==='aot')
+    stopAot();
+    else
+    stopWin();
+  };
   const data = [
     {
       id: 1,
@@ -59,9 +67,10 @@ function App() {
         },
       ],
     },
-    { 
+    {
       id: 3,
-      question: "What is the method that turns the Subjects of Ymir into Titans?",
+      question:
+        "What is the method that turns the Subjects of Ymir into Titans?",
       answers: [
         {
           text: "Eaten by an existing Titan",
@@ -103,7 +112,7 @@ function App() {
         },
       ],
     },
-    {  
+    {
       id: 5,
       question: "What relation is Kenny the Ripper to Levi Ackerman?",
       answers: [
@@ -125,9 +134,11 @@ function App() {
         },
       ],
     },
-    { // Dancing // Jumping // Whistling
+    {
+      // Dancing // Jumping // Whistling
       id: 6,
-      question: "The Founding Titan allows its user to gain control of other titans by doing what?",
+      question:
+        "The Founding Titan allows its user to gain control of other titans by doing what?",
       answers: [
         {
           text: "Screaming",
@@ -149,7 +160,8 @@ function App() {
     },
     {
       id: 7,
-      question: "Who was Jean Kirschtein disguised as when he was taken to the Imperial Capital for judgment?",
+      question:
+        "Who was Jean Kirschtein disguised as when he was taken to the Imperial Capital for judgment?",
       answers: [
         {
           text: "Levi Ackermann ",
@@ -169,9 +181,10 @@ function App() {
         },
       ],
     },
-    {  
+    {
       id: 8,
-      question: "What did Levi find in the false bottom of Eren’s basement desk?",
+      question:
+        "What did Levi find in the false bottom of Eren’s basement desk?",
       answers: [
         {
           text: "Books",
@@ -191,7 +204,7 @@ function App() {
         },
       ],
     },
-    { 
+    {
       id: 9,
       question: "How did Eren accidentally trigger his Titan transformation?",
       answers: [
@@ -213,7 +226,7 @@ function App() {
         },
       ],
     },
-    {  
+    {
       id: 10,
       question: "What was the last gift that Kenny Ackermann gave to Levi?",
       answers: [
@@ -235,9 +248,10 @@ function App() {
         },
       ],
     },
-    {  
+    {
       id: 11,
-      question: "How long does someone live for after eating a person controlling one of the 9 Titans?",
+      question:
+        "How long does someone live for after eating a person controlling one of the 9 Titans?",
       answers: [
         {
           text: "10 years",
@@ -257,9 +271,10 @@ function App() {
         },
       ],
     },
-    {   
+    {
       id: 12,
-      question: "In the ruined village of Ragako, Conny Springer found a Titan lying where?",
+      question:
+        "In the ruined village of Ragako, Conny Springer found a Titan lying where?",
       answers: [
         {
           text: "his family’s house",
@@ -279,7 +294,7 @@ function App() {
         },
       ],
     },
-    { 
+    {
       id: 13,
       question: "The ‘D’ in ODM gear stands for what?",
       answers: [
@@ -301,7 +316,8 @@ function App() {
         },
       ],
     },
-    { //  //  // 
+    {
+      //  //  //
 
       id: 14,
       question: "The Battle of Shiganshina District took place in what year?",
@@ -347,7 +363,7 @@ function App() {
       ],
     },
   ];
-  let finished=  questionNumber > data.length ;
+  let finished = questionNumber > data.length;
   const score = useMemo(
     () =>
       [
@@ -376,55 +392,77 @@ function App() {
   }, [questionNumber, score]);
 
   return (
-    <div className="app">
+    <div className='app'>
       {!username ? (
         <Start setUsername={setUsername} />
       ) : (
         <>
-          <div className="main">
+          <div className='main'>
             {timeOut || finished ? (
               <>
-              {finished ? (
-                <h1 className="endText"> You Are The Founding Titan , Rumble The World!</h1>
-              ):(
-                <h1 className="endText"> {username.toUpperCase()} IS  A: {earned}</h1>
-              )}
-              {finished ? win(): aot()}
+                {finished ? (
+                  <>
+                    <h1 className='endText'>
+                      {" "}
+                      You Are The Founding Titan , Rumble The World!
+                    </h1>
+                    <button
+                      className='startButton'
+                      onClick={() => {
+                        playAgain("win");
+                      }}>
+                      Play Again
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <h1 className='endText'>
+                      {" "}
+                      {username.toUpperCase()} IS A: {earned}
+                    </h1>
+                    <button
+                      className='startButton'
+                      onClick={() => {
+                        playAgain("aot");
+                      }}>
+                      Play Again
+                    </button>
+                  </>
+                )}
+                {finished ? win() : aot()}
               </>
             ) : (
               <>
-                <div className="top">
-                  <div className="timer">
+                <div className='top'>
+                  <div className='timer'>
                     <Timer
                       setTimeOut={setTimeOut}
                       questionNumber={questionNumber}
                     />
                   </div>
                 </div>
-                <div className="bottom">
+                <div className='bottom'>
                   <Trivia
                     data={data}
                     questionNumber={questionNumber}
                     setQuestionNumber={setQuestionNumber}
                     setTimeOut={setTimeOut}
-      
                   />
                 </div>
               </>
             )}
           </div>
-          <div className="score">
-            <ul className="scoreList">
+          <div className='score'>
+            <ul className='scoreList'>
               {score.map((m) => (
                 <li
                   className={
                     questionNumber === m.id
                       ? "scoreListItem active"
                       : "scoreListItem"
-                  }
-                >
-                  <span className="scoreListItemNumber">{m.id}</span>
-                  <span className="scoreListItemAmount">{m.amount}</span>
+                  }>
+                  <span className='scoreListItemNumber'>{m.id}</span>
+                  <span className='scoreListItemAmount'>{m.amount}</span>
                 </li>
               ))}
             </ul>
